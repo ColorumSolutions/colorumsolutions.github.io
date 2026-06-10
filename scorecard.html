@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colorum Readiness Scorecard</title>
+<meta name="description" content="Free 5-minute organizational preparedness scorecard by Colorum. Weighted, domain-normalized readiness scoring — bringing color to the gray area.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#1F3D2B; --emerald:#2E6F4E; --banker:#0F5E3A; --sage:#A3BFA8;
+    --mint:#9CCFA7; --cream:#F4F1E8; --charcoal:#2B2B2B; --gold:#B58B39;
+    --rust:#A85B2A; --umber:#6B4A1F; --line:rgba(31,61,43,.18);
+    color-scheme:light;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Public Sans",system-ui,sans-serif;background:var(--cream);color:var(--charcoal);line-height:1.55;font-size:16px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  header{background:var(--forest);color:var(--cream);padding:14px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-family:"Archivo",sans-serif;font-weight:800;letter-spacing:.12em}
+  .mark{position:relative;width:30px;height:30px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;flex:none}
+  .mark i:nth-child(1){background:var(--banker)}.mark i:nth-child(2){background:var(--gold)}
+  .mark i:nth-child(3){background:var(--rust)}.mark i:nth-child(4){background:var(--umber)}
+  .mark::after{content:"C";position:absolute;inset:0;display:grid;place-items:center;font-family:"Archivo",sans-serif;font-weight:900;color:var(--cream);font-size:19px}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald)}
+  h1{font-family:"Archivo",sans-serif;color:var(--forest);font-weight:900;font-size:clamp(28px,6vw,40px);letter-spacing:.03em;text-transform:uppercase;line-height:1.1}
+  .intro{padding:46px 0 30px}
+  .intro p{margin:14px 0;color:#4a4a44;max-width:56ch}
+  .btn{display:inline-block;padding:13px 28px;font-family:"Archivo",sans-serif;font-weight:600;font-size:15px;border:2px solid var(--forest);background:var(--forest);color:var(--cream);cursor:pointer;transition:background .15s}
+  .btn:hover{background:var(--banker);border-color:var(--banker)}
+  .btn.ghost{background:transparent;color:var(--forest)}
+  /* quiz */
+  .domain{margin:30px 0}
+  .domain h2{font-family:"Archivo",sans-serif;color:var(--forest);font-size:15px;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--forest);padding-bottom:6px;margin-bottom:8px}
+  .q{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
+  .q p{font-size:15px;max-width:58ch;color:#55604f;font-weight:400}
+  .gate-tag{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--rust);letter-spacing:.1em}
+  .yn{display:flex;gap:6px;flex:none}
+  .yn button{padding:8px 16px;font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;border:2px solid var(--forest);background:transparent;color:var(--forest);cursor:pointer}
+  .yn button.yes.sel{background:var(--emerald);border-color:var(--emerald);color:#fff}
+  .yn button.no.sel{background:var(--rust);border-color:var(--rust);color:#fff}
+  .progress{position:sticky;top:0;background:var(--cream);padding:10px 0;z-index:10;border-bottom:1px solid var(--line)}
+  .pbar{height:6px;background:rgba(31,61,43,.12)}
+  .pbar i{display:block;height:100%;background:var(--emerald);width:0%;transition:width .2s}
+  .ptext{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--emerald);margin-top:4px;letter-spacing:.08em}
+  /* results */
+  .score-hero{text-align:center;padding:40px 0 26px}
+  .score-num{font-family:"Archivo",sans-serif;font-weight:900;font-size:84px;line-height:1}
+  .band-name{font-family:"Archivo",sans-serif;font-weight:800;font-size:24px;letter-spacing:.14em;text-transform:uppercase;margin-top:6px}
+  .band-desc{color:#4a4a44;margin-top:8px}
+  .gate-warn{background:#fff;border-left:5px solid var(--rust);padding:14px 16px;margin:18px 0;font-size:14.5px}
+  .gate-warn strong{color:var(--rust)}
+  .heat{margin:26px 0}
+  .heat-row{display:flex;align-items:center;gap:10px;margin:9px 0}
+  .heat-label{flex:0 0 175px;font-size:13px;font-weight:600;color:var(--forest)}
+  .heat-bar{flex:1;height:22px;background:rgba(31,61,43,.10);position:relative}
+  .heat-bar i{display:block;height:100%;width:0%;transition:width .6s}
+  .heat-pct{flex:0 0 44px;text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12px}
+  .cta{background:var(--forest);color:var(--cream);padding:26px 22px;margin:30px 0}
+  .cta h3{font-family:"Archivo",sans-serif;font-size:18px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+  .cta p{color:var(--sage);font-size:14.5px;margin-bottom:14px}
+  .cta a{display:inline-block;padding:12px 24px;background:var(--gold);color:var(--charcoal);font-family:"Archivo",sans-serif;font-weight:600;font-size:14px;text-decoration:none}
+  footer{background:#16291e;color:var(--sage);padding:22px 0;font-size:12.5px;text-align:center;margin-top:40px}
+  .hidden{display:none}
+  .tagline{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--emerald);letter-spacing:.08em;margin-top:20px}
+</style>
+</head>
+<body>
+
+<header><div class="wrap"><div class="brand"><span class="mark"><i></i><i></i><i></i><i></i></span>COLORUM</div></div></header>
+
+<!-- INTRO -->
+<section id="intro" class="intro wrap">
+  <span class="eyebrow">Free · 5 minutes · 21 questions</span>
+  <h1>Readiness Scorecard</h1>
+  <p>How prepared is your organization for its worst day? Answer 21 yes/no questions across seven resilience domains. Our CHROMA scoring engine weighs what matters most, scores each domain, and grades your overall readiness on the Colorum scale.</p>
+  <p>No email required to see your score. Nothing you enter is stored or transmitted — scoring runs entirely in your browser.</p>
+  <button class="btn" onclick="startQuiz()">Start the Scorecard</button>
+  <p class="tagline">// BRINGING COLOR TO THE GRAY AREA</p>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="hidden">
+  <div class="progress"><div class="wrap"><div class="pbar"><i id="pfill"></i></div><div class="ptext" id="ptext">0 / 21 ANSWERED</div></div></div>
+  <div class="wrap" id="domains"></div>
+  <div class="wrap" style="padding:24px 20px 50px">
+    <button class="btn" id="scoreBtn" disabled onclick="showResults()">Answer all questions to score</button>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="hidden wrap">
+  <div class="score-hero">
+    <span class="eyebrow">Your Colorum Readiness Score</span>
+    <div class="score-num" id="scoreNum">0</div>
+    <div class="band-name" id="bandName"></div>
+    <div class="band-desc" id="bandDesc"></div>
+  </div>
+  <div id="gateWarns"></div>
+  <div class="heat">
+    <span class="eyebrow">Domain Heatmap</span>
+    <div id="heatRows"></div>
+  </div>
+  <div class="cta">
+    <h3>Turn your score into a roadmap</h3>
+    <p>This free scorecard is a snapshot. The full Colorum Organizational Preparedness Assessment goes deeper — 75+ controls, maturity scaling, evidence review, and a prioritized improvement roadmap. Every deliverable is tailored to your organization and adapts as the engagement unfolds, ensuring full alignment with how you actually operate.</p>
+    <a href="mailto:Contact@colorumsolutionscom.org?subject=Full%20Preparedness%20Assessment%20Inquiry">Request the Full Assessment</a>
+  </div>
+  <button class="btn ghost" onclick="location.reload()">Retake</button>
+</section>
+
+<footer>© 2026 Colorum InfoSec Solutions · Bringing color to the gray area<br>CHROMA™ scoring engine and the Colorum Readiness Scorecard are proprietary Consultant Materials.</footer>
+
+<script>
+// ---------- CHROMA ENGINE v1 ----------
+// Weighted (1-5) · Domain-normalized · Gated · Binary inputs
+const DOMAINS = [
+  { name: "Governance & Policy", qs: [
+    { t: "Do you maintain a documented Incident Response Plan?", w: 5, gate: true },
+    { t: "Are response and continuity plans reviewed at least annually?", w: 3 },
+    { t: "Is there a maintained emergency contact roster with assigned responsibilities?", w: 4 },
+  ]},
+  { name: "Backup & Recovery", qs: [
+    { t: "Do you follow the 3-2-1 backup strategy (3 copies, 2 media, 1 offsite)?", w: 5 },
+    { t: "Are backups tested with actual restores at least quarterly?", w: 5, gate: true },
+    { t: "Are recovery time and recovery point objectives (RTO/RPO) defined?", w: 4 },
+  ]},
+  { name: "Infrastructure Resilience", qs: [
+    { t: "Is a Golden Image (hardened system baseline) maintained?", w: 3 },
+    { t: "Is an up-to-date asset inventory maintained?", w: 4 },
+    { t: "Are critical vulnerabilities remediated within a defined SLA?", w: 5 },
+  ]},
+  { name: "Continuity & Alternate Operations", qs: [
+    { t: "Can employees work remotely during a facility outage?", w: 4 },
+    { t: "Are alternate communication methods available if primary channels fail?", w: 4, gate: true },
+    { t: "Is there an alternate operations site or environment (hot, warm, or cold)?", w: 4 },
+  ]},
+  { name: "Security Operations", qs: [
+    { t: "Is MFA enforced for all privileged accounts?", w: 5, gate: true },
+    { t: "Is centralized logging or a SIEM deployed?", w: 4 },
+    { t: "Is security awareness training conducted for all staff?", w: 3 },
+  ]},
+  { name: "Personnel Preparedness", qs: [
+    { t: "Has a tabletop exercise been conducted within the last 12 months?", w: 4 },
+    { t: "Are emergency roles assigned to specific, named personnel?", w: 4 },
+    { t: "Are backups identified and cross-trained for key personnel?", w: 3 },
+  ]},
+  { name: "Physical Security", qs: [
+    { t: "Are physical access controls documented and enforced?", w: 4 },
+    { t: "Is surveillance footage retained for at least 30 days?", w: 3 },
+    { t: "Are emergency exits, lighting, and fire equipment inspected on schedule?", w: 2 },
+  ]},
+];
+// ESGRU bands — the Colorum scale
+const BANDS = [
+  { min: 90, name: "EMERALD", color: "#0F5E3A", desc: "Highly prepared. Resilience is operationalized — maintain and exercise it." },
+  { min: 75, name: "SAGE",    color: "#7da387", desc: "Prepared. Solid foundation with specific domains to mature." },
+  { min: 60, name: "GOLD",    color: "#B58B39", desc: "Moderate risk. Core controls exist, but gaps would slow your recovery." },
+  { min: 40, name: "RUST",    color: "#A85B2A", desc: "Significant gaps. A serious disruption would likely outpace current capability." },
+  { min: 0,  name: "UMBER",   color: "#6B4A1F", desc: "High risk. Preparedness needs structured, prioritized attention — soon." },
+];
+const GATE_CAP = 59; // failing any gate caps the overall score into RUST or below
+
+const answers = {};
+let total = 0;
+DOMAINS.forEach(d => total += d.qs.length);
+
+function startQuiz(){
+  document.getElementById("intro").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  const host = document.getElementById("domains");
+  DOMAINS.forEach((d, di) => {
+    const sec = document.createElement("div");
+    sec.className = "domain";
+    sec.innerHTML = `<h2>${String(di+1).padStart(2,"0")} · ${d.name}</h2>`;
+    d.qs.forEach((q, qi) => {
+      const id = di + "-" + qi;
+      const row = document.createElement("div");
+      row.className = "q";
+      row.innerHTML = `<p>${q.t} ${q.gate ? '<span class="gate-tag">· CRITICAL CONTROL</span>' : ''}</p>
+        <span class="yn">
+          <button class="yes" onclick="answer('${id}',1,this)">Yes</button>
+          <button class="no"  onclick="answer('${id}',0,this)">No</button>
+        </span>`;
+      sec.appendChild(row);
+    });
+    host.appendChild(sec);
+  });
+  window.scrollTo(0,0);
+}
+
+function answer(id, val, btn){
+  answers[id] = val;
+  const sib = btn.parentElement.querySelectorAll("button");
+  sib.forEach(b => b.classList.remove("sel"));
+  btn.classList.add("sel");
+  const n = Object.keys(answers).length;
+  document.getElementById("pfill").style.width = (n/total*100) + "%";
+  document.getElementById("ptext").textContent = n + " / " + total + " ANSWERED";
+  const sb = document.getElementById("scoreBtn");
+  if(n === total){ sb.disabled = false; sb.textContent = "Reveal my score"; }
+}
+
+function bandFor(score){ return BANDS.find(b => score >= b.min); }
+
+function showResults(){
+  // CHROMA math
+  const domainScores = [];
+  const failedGates = [];
+  DOMAINS.forEach((d, di) => {
+    let earned = 0, possible = 0;
+    d.qs.forEach((q, qi) => {
+      const v = answers[di + "-" + qi] || 0;
+      earned += v * q.w; possible += q.w;
+      if(q.gate && v === 0) failedGates.push(q.t);
+    });
+    domainScores.push({ name: d.name, pct: Math.round(earned / possible * 100) });
+  });
+  let overall = Math.round(domainScores.reduce((s,d) => s + d.pct, 0) / domainScores.length);
+  const uncapped = overall;
+  if(failedGates.length) overall = Math.min(overall, GATE_CAP);
+  const band = bandFor(overall);
+
+  document.getElementById("quiz").classList.add("hidden");
+  document.getElementById("results").classList.remove("hidden");
+  const sn = document.getElementById("scoreNum");
+  sn.textContent = overall; sn.style.color = band.color;
+  const bn = document.getElementById("bandName");
+  bn.textContent = band.name; bn.style.color = band.color;
+  document.getElementById("bandDesc").textContent = band.desc;
+
+  const gw = document.getElementById("gateWarns");
+  gw.innerHTML = "";
+  if(failedGates.length){
+    gw.innerHTML = `<div class="gate-warn"><strong>Score capped${uncapped !== overall ? " from " + uncapped : ""}:</strong>
+      ${failedGates.length} critical control${failedGates.length>1?"s are":" is"} missing. No surrounding strength offsets these:
+      <ul style="margin:8px 0 0 18px">${failedGates.map(g => "<li>"+g+"</li>").join("")}</ul></div>`;
+  }
+  const hr = document.getElementById("heatRows");
+  hr.innerHTML = "";
+  domainScores.forEach(d => {
+    const b = bandFor(d.pct);
+    hr.innerHTML += `<div class="heat-row"><div class="heat-label">${d.name}</div>
+      <div class="heat-bar"><i style="background:${b.color}"></i></div>
+      <div class="heat-pct" style="color:${b.color}">${d.pct}</div></div>`;
+  });
+  window.scrollTo(0,0);
+  setTimeout(() => {
+    document.querySelectorAll(".heat-bar i").forEach((el, i) => { el.style.width = domainScores[i].pct + "%"; });
+  }, 60);
+}
+</script>
+</body>
+</html>
